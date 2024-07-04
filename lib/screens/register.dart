@@ -1,5 +1,8 @@
-import 'package:chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:chat/widgets/widgets.dart';
+import 'package:chat/services/auth_services.dart';
+import 'package:provider/provider.dart';
+import 'package:chat/helpers/show_alert.dart';
 
 class Register extends StatelessWidget {
   @override
@@ -68,6 +71,7 @@ class _FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -89,8 +93,26 @@ class _FormState extends State<_Form> {
               isPassword: true,
               textController: passwdCtrl),
           Rbutton(
-            text: 'Ingresar',
-            onPressed: () => {print(emailCtrl.text), print(passwdCtrl.text)},
+            text: 'Registrar',
+            onPressed: authService.autenticando
+                ? () {}
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final registerOk = await authService.register(
+                      nameCtrl.text.trim(),
+                      emailCtrl.text.trim(),
+                      passwdCtrl.text.trim(),
+                    );
+                    if (nameCtrl.text.trim().isEmpty) {
+                      showAlert(context, 'Registro Incorrecto',
+                          'El nombre es obligatorio');
+                    }
+                    if (registerOk == true) {
+                      Navigator.pushReplacementNamed(context, 'users');
+                    } else {
+                      showAlert(context, 'Registro Incorrecto', registerOk['msg']);
+                    }
+                  },
           ),
         ],
       ),

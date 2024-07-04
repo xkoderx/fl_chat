@@ -1,5 +1,8 @@
+import 'package:chat/helpers/show_alert.dart';
+import 'package:chat/services/auth_services.dart';
 import 'package:chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatelessWidget {
   @override
@@ -60,11 +63,12 @@ class _Form extends StatefulWidget {
 }
 
 class _FormState extends State<_Form> {
-  TextEditingController emailCtrl = TextEditingController();
-  TextEditingController passwdCtrl = TextEditingController();
+  final emailCtrl = TextEditingController();
+  final passwdCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -82,7 +86,21 @@ class _FormState extends State<_Form> {
               textController: passwdCtrl),
           Rbutton(
             text: 'Ingresar',
-            onPressed: () => {print(emailCtrl.text), print(passwdCtrl.text)},
+            onPressed: authService.autenticando
+                ? () {}
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final loginOk = await authService.login(
+                      emailCtrl.text.trim(),
+                      passwdCtrl.text.trim(),
+                    );
+                    if (loginOk) {
+                      Navigator.pushReplacementNamed(context, 'users');
+                    } else {
+                      showAlert(context, 'Login Incorrecto',
+                          'Revise sus credenciales nuevamente');
+                    }
+                  },
           ),
         ],
       ),

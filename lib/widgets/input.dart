@@ -28,6 +28,7 @@ class Cinput extends StatelessWidget {
                   )
                 ]),
             child: TextField(
+              controller: textController,
               textAlignVertical: TextAlignVertical.center,
               autocorrect: false,
               keyboardType: keyboardType,
