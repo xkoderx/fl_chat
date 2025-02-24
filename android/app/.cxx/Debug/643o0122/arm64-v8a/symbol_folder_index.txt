@@ -1,0 +1,1 @@
+/home/reyacido/StudioProjects/chat/build/app/intermediates/cxx/Debug/643o0122/obj/arm64-v8a
